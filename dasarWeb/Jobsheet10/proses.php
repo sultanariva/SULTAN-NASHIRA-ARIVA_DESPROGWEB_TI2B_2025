@@ -16,6 +16,22 @@ if ($aksi == 'tambah') {
     } else {
         echo "Gagal menambahkan data: " . pg_last_error($koneksi);
     }
+} elseif ($aksi == 'ubah') {
+    if (isset($_POST['id'])) {
+        $id = $_POST['id'];
+    }
+
+    $query = "UPDATE anggota SET nama = '$nama', jenis_kelamin = '$jenis_kelamin', alamat = '$alamat', no_telp = '$no_telp' WHERE id = '$id'";
+    
+    if (pg_query($koneksi, $query)) {
+        header("Location: index.php");
+        exit();
+    } else {
+        echo "Gagal mengubah data: " . pg_last_error($koneksi);
+    }
+}
+else {
+    echo "ID tidak valid.";
 }
 
 pg_close($koneksi);
