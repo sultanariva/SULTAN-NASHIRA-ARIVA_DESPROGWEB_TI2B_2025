@@ -6,6 +6,7 @@ if (!empty($_SESSION['username'])) {
     require '../fungsi/pesan_kilat.php';
     require '../fungsi/anti_injection.php';
 
+    // Hapus Jabatan
     if (!empty($_GET['jabatan'])) {
         $id = antiinjection($koneksi, $_GET['id']);
         $query = "DELETE FROM jabatan WHERE id = '$id'";
@@ -15,7 +16,28 @@ if (!empty($_SESSION['username'])) {
         } else {
             pesan('danger', "Jabatan Tidak Terhapus Karena: " . mysqli_error($koneksi));
         }
+        header("Location: ../index.php?page=jabatan");
+        exit;
     }
-    header("Location: ../index.php?page=jabatan");
+
+    // Hapus Anggota
+    if (!empty($_GET['anggota'])) {
+        $id = antiinjection($koneksi, $_GET['id']);
+        // Hapus dari anggota terlebih dahulu (child table)
+        $query2 = "DELETE FROM anggota WHERE user_id = '$id'";
+        if (mysqli_query($koneksi, $query2)) {
+            // Baru hapus dari user (parent table)
+            $query = "DELETE FROM user WHERE id = '$id'";
+            if (mysqli_query($koneksi, $query)) {
+                pesan('success', "Anggota Telah Terhapus.");
+            } else {
+                pesan('warning', "Data Anggota Terhapus Tetapi Data Login Tidak Terhapus Karena: " . mysqli_error($koneksi));
+            }
+        } else {
+            pesan('danger', "Anggota Tidak Terhapus Karena: " . mysqli_error($koneksi));
+        }
+        header("Location: ../index.php?page=anggota");
+        exit;
+    }
 }
 ?>
